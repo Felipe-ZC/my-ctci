@@ -8,13 +8,13 @@ function removeDups(str) {
 	/*
 	 * Solution 1
 	 * Time: O(n^2)
-	 * Space: O(1)
+	 * Space: O(n)
 	 * */
 
 	// If the ith char appears before the ith position, don't add 
 	// it to to the result string, otherwise concatenate char with
 	// the result string.
-	let newStr = "";
+  /*let newStr = "";
 	for(let i = 0; i < str.length; ++i) {
 		let curr = str.charAt(i);
 		let isDup = false;
@@ -26,7 +26,28 @@ function removeDups(str) {
 		newStr += isDup ? "" : curr;
 	}
 
-	return newStr;
+	return newStr;*/
+	
+	/*
+	 * Solution 2
+	 * Time: O(n^2)
+	 * Space: O(1) // Strings are immutable in JS, unless str is an array, space will 
+	 * always be O(n)
+	 * */
+
+	// If the ith char appears before the ith position, make the
+	// value null, that way when we join the char array to produce
+	// a string we ignore all null values. 
+	let arr = str.split(''); // For O(1) Space str must be an array...
+	for(let i = 0; i < arr.length; ++i) {
+		let curr = arr[i];
+
+		for(let j = i-1; j >= 0; --j) 
+			if(arr[j] == curr) 
+				arr[i] = null;		
+	}
+
+	return arr.join('');
 }
 
 module.exports = removeDups;
