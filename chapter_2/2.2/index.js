@@ -88,25 +88,23 @@ function getNthFromLastV2(n, head) {
 }
 
 /*
- * Solution 1: The last node is the null node at the end of the list, not the tail.
+ * Solution 3: The last node is the null node at the end of the list, not the tail.
  * 1 -> 2 -> 3 -> 4 -> null -----> null is the last node in the list
  * */
 function getNthFromLastV3(n, head) {
-	let slow = head;
-	let fast = head;
+	let dummy = new Node(0);
+	dummy.next = head;
+	
+	let slow = dummy;
+	let fast = dummy;
 	
 	for(let i = 0; i < n; ++i)
-		fast = fast.next;
-
+			fast = fast.next;
+	
 	while(fast) {
-		slow = slow.next;
-		fast = fast.next;
+			slow = slow.next;
+			fast = fast.next;
 	}
-
+	
 	return slow;
 }
-
-let n = process.argv.slice(2)[0];
-printList(makeList());
-console.log(`\n${n}th item from the end of the list:`)
-console.log(getNthFromLastV3(n, makeList()));
