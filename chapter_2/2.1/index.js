@@ -10,7 +10,7 @@ function makeList() {
 	let head = new Node(0);
 	let node = head;
 
-	while(counter < 20) {
+	while(counter < 3) {
 		if(counter % 2 === 0) {
 			node.next = new Node(counter);
 			node.next.next = new Node(counter);
