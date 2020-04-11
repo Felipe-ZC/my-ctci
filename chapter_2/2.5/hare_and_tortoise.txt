@@ -1,0 +1,159 @@
+--- Floyd's cycle detection algorithm --- 
+
+This algorithm is used to determine if a linked list contains a cycle. It uses two pointers:
+	1) Tortoise (Slow)
+	2) Hare (Fast)
+
+Which are used to move through the list at different speeds. In the context of a linked list, the 
+hare moves TWO nodes after each iteration while the tortoise moves ONE node after each iteration.
+
+Eventually, the slow and fast pointers will meet at some node in the cycle. Once the two pointers
+are pointing to the same node, we know that the linked list contains a cycle. 
+
+A JS implementation of the algorithm would look like this:
+
+var detectCycle(head) {
+	let slow = head;
+	let fast = head;
+
+	while(fast && fast.next) {
+		slow = slow.next;
+		fast = fast.next.next;
+
+		if(slow === fast)
+			return true;
+	}
+
+	return false; 
+}
+
+At the end of the algorithm, slow and fast will be pointing to some node INSIDE the cycle!
+
+Outside
+cycle
+^    
+1 -> 2 -> 3 -> 4 -> | 
+		 ^---------------
+		 Cycle Start
+
+To find the START of the cycle, that is, the FIRST NODE IN THE CYCLE, we must 
+find the intersection between the part of the list that is outside the cycle
+and the starting node of the cycle. 
+
+This means we must iterate from the head of the list, and some node inside the cycle
+until we find an intersection! In this case it is important to move each pointer
+ONLY ONE NODE! 
+
+var getCycleStart(intersect, head) {
+	let node = head;
+	
+	while(node !== intersect) {
+		node = node.next;
+		intersect = intersect.next
+	}
+
+	return node;
+}
+
+So the big question here is, WHY DID THESE TWO NODES MEET AT THE START OF THE CYCLE? 
+Also if the nodes meet at some arbitrary node in the cycle, how are we so sure that
+at the end of the getCycleStart algo node is pointing to the start of the cycle?
+
+Lets go back to the first algo. detectCycle. In this algorithm we set two pointers
+to start at the same node and move at different speeds. Eventually they meet at 
+some node in the cycle and the algorithm stops. 
+
+Lets divide the linked list into two phases:
+	1) Outside the cycle 
+	2) Inside the cycle 
+ 
+Outside			
+cycle				Intersection
+^    ----------^ K (2)
+1 -> 2 -> 3 -> 4 -> | 
+---	 ^--------------- L (3)
+^		 Cycle Start 
+N
+
+Suppose that the length of portion of the list that sits inside the cycle is L.
+In the example above, L = 3.
+
+Suppose that K is the distance from the start of the loop to the point of intersection
+betweem slow and fast. In the example above, K = 2.
+
+Since both slow and fast start at the same node, they travel the same length to get to the
+start of the loop. Assume this length is called N, and in the example above N = 1.
+
+*** C(n) is a function that returns the number of times a pointer has iterated through a cycle.
+
+Now lets say we would like to calculate how much distance slow and fast covered:
+ 
+dist_fast = N + (C(fast) * L) + K
+dist_slow = N + (C(slow) * L) + K
+
+Because fast travels two nodes in front of slow, the distance covered by fast must be two times
+that of slow:
+
+dist_fast = 2 * dist_slow
+
+Which means that:
+
+N + (C(fast) * L) + K = 2(N + (C(slow) * L) + K)
+
+If we slove this equation we get:
+L(C(fast) * 2C(slow)) = N + K
+
+This means the N + K is an integer multiple of L!
+
+Lets consider a circle as our linked list, with perimiter 4.
+If we travel two times along the perimerter of the circle, 
+the total distance traveled will be 8. However, we will end 
+up right where we started:
+
+Integer
+Multiple
+^   v-------- Perimeter
+2 * 4 = 8 -> Total distance traveled
+
+If we travel 3 times along the perimeter of the circle, 
+the total distance traveled will be 12 but once again we 
+will end up right where we started.
+
+Integer
+Multiple
+^   v-------- Perimeter
+3 * 4 = 12 -> Total distance traveled
+
+In the example above, 2 and 3 are INTEGER MULTIPLE of THE PERMITER OF THE CIRCLE!
+Going back to our cycle:
+The total distance traveled is an integer multiple of L!
+Therefore:
+(N + K) = int * L;
+
+In our second algorithm, getCycleStart, our two nodes cover the same distance
+because they only move one node at a time and eventually reach some point of intersection. 
+
+This means that that both node and intersect cover a distance of N. However, intersect
+has already traveled K nodes from the start of the cycle. This means that our intersect 
+node (the node already in the cycle) has traveled a total of N + K nodes. 
+
+intersect_dist = N + K
+
+We know that N + K is an integer multiple of length of the cycle, this means that intersect 
+will always come back to the start of the cycle because N + K is a multiple of L.
+
+If we go back to the circle example:
+
+Lets say we have a circle whose perimeter is 4, and we go around the circle 3 times. 
+Thus giving us a total distance traveled of 12. No matter where we start, we will 
+always come back to the point where we started because 12 is a multiple of 4.
+
+If we got back to the linked list example, once intersect and node meet at the start of the cycle,
+we can observe that 
+
+intersect has traveled n + k nodes and node has traveled n nodes. However we know that if intersect
+covers n + k nodes, then it will be pointing to the start of the cycle (see circle example). 
+
+We know that node is exactly N nodes from the start of the cycle, this means that node and intersect
+will always meet at the start of the cycle! 
+
