@@ -1,0 +1,39 @@
+--- Min Stack --- 
+
+Lets take a close look at the stack data structure:
+
+Elements are only added and removed FROM THE TOP of the stack!
+
+When we add new numbers to the stack, let say num, the numbers 
+below it will not change as long as num remains on the Stack.
+
+Numbers above num can change but not numbers below it! This means
+that whenever a specific number, num, is on the top of the stack,
+the minimum will always be the same!
+
+This means that the minium number will change at different points 
+in the stack. Therefore we can maintain the minium by modifying the
+classic push method on a stack:
+
+*** Push in the next number AND the current minimum!
+
+-Example 
+
+Given these numbers: 4,3,1,12,3,0
+We can push them numbers onto the stack using an object:
+{val : number, min: number}
+
+---      ---
+	| 0,0  |  --> Min at the top of the stack is 0
+  | 3,1  |	--> If we call pop(), the new min is 1!
+	| 12,1 |
+	| 1,1  |
+	| 3,3  |
+	| 4,4  |  --> As you can see, the minimum changes depending
+  -------- 			on where in the stack the number is located!
+
+--- Max Stack --- 
+
+Same idea as the min stack except while pushing we check for a maximum
+value instead of a minimum!
+
